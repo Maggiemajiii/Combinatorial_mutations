@@ -10,15 +10,13 @@ Features: Height, Hair Color
 * Source: SNP data
 * 1000 Genomes
 
-```{r flowA, echo=FALSE, out.width="90%", fig.align='center'}
-knitr::include_graphics("figures/flow1.png")
-```
+![Workflow overview](figures/flow1.png)
+
 
 ## Federation -> clients
 
-```{r flowB, echo=FALSE, out.width="90%", fig.align='center'}
-knitr::include_graphics("figures/flow2.png")
-```
+![Workflow overview](figures/flow2.png)
+
 
 ### Data Preprocessing
 
