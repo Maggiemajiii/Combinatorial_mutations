@@ -16,6 +16,10 @@ knitr::include_graphics("figures/flow1.png")
 
 ## Federation -> clients
 
+```{r flowB, echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("figures/flow2.png")
+```
+
 ### Data Preprocessing
 
 * reducing dimensionality
