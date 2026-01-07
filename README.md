@@ -1,84 +1,79 @@
-# Combinatorial_mutations
-Protein modeling for combinatorial mutations
+# Protein Modeling for Combinatorial Mutations
 
-## Problem
-
-Predicting the phenotype of combinatorial mutations based on single mutation data.
-Features: Height, Hair Color
-
-## Dataset
-* Source: [Add link to dataset source]
-
-## Federation -> clients
-
-### Data Preprocessing
-
-* reducing dimensionality
-
-### Model Structure
-
-* Baseline model: Linear Regression
-* Ensemble model: Random Forest
-* Finetuning model: GrridsearchCV
-
-
-## Tools
-
-## Implementation
-
-## Usage
-
-* Discrete Phenotype
-* Continuous Phenotype
-
-## Delivery Flowchart
+## 📊 Project Flowchart
 
 ```mermaid
-flowchart TD
-	A[Problem: Predict phenotype of combinatorial mutations] --> B[Dataset: Single mutation data + features]
-	B --> C{Training mode}
-	C -- Federated --> S1[Server: Broadcast preprocessing + training config]
-	C -- Centralized --> D[Centralized pipeline]
+graph TD
+    %% --- Phase 1: Data Acquisition & Splitting ---
+    subgraph Dataset_Prep [1. Dataset Construction]
+        direction TB
+        RawData[("<b>Raw Data Sources</b><br>(ClinVar / AWS Open Data)<br>")]
+        
+        Filter[Data Cleaning & Splitting]
+        RawData --> Filter
+        
+        Filter -->|Subset A: Single Mutations| ClientData1[Client 1 Data]
+        Filter -->|Subset B: Different Single Mutations| ClientData2[Client 2 Data]
+        Filter -->|Subset C: Combinatorial Mutations| TestData[<b>Test Data</b><br>(Hold-out for Validation)]
+    end
 
-	subgraph Clients[Federated clients]
-		direction TB
-		E[Ingest local data] --> F[Preprocess: QC, normalize, encode]
-		F --> G[Dimensionality reduction (e.g., PCA)]
-		G --> H{Model}
-		H -- Baseline --> H1[Linear Regression]
-		H -- Ensemble --> H2[Random Forest]
-		H -- Tuning --> H3[GridSearchCV]
-		H1 --> I[Local evaluation]
-		H2 --> I
-		H3 --> I
-		I --> J[Export local model + metrics]
-	end
+    %% --- Phase 2: Preprocessing ---
+    subgraph Preprocessing [2. Feature Engineering]
+        direction TB
+        Seq["Protein Sequences"]
+        
+        Embed[<b>Foundation Model Embedding</b><br>(ESM / BioNeMo)<br>]
+        DimRed["<b>Dimensionality Reduction</b><br>(PCA / t-SNE)<br>"]
+        
+        ClientData1 --> Seq --> Embed --> DimRed
+        ClientData2 --> Seq --> Embed --> DimRed
+    end
 
-	S1 --> E
-	J --> S2[Server: Secure aggregation]
-	S2 --> N[Global model selection]
+    %% --- Phase 3: Federated Learning System ---
+    subgraph FL_System [3. Federated Learning (NVFlare)]
+        direction TB
+        Server((<b>NVFlare Server</b><br>Global Aggregation))
+        
+        subgraph Client_Node_1 [Client 1]
+            Training1[Train Local Model]
+            Tuning1["Hyperparameter Tuning<br>(GridSearchCV)"]
+        end
+        
+        subgraph Client_Node_2 [Client 2]
+            Training2[Train Local Model]
+            Tuning2["Hyperparameter Tuning<br>(GridSearchCV)"]
+        end
 
-	D --> K[Preprocess + Dimensionality Reduction]
-	K --> L{Train models}
-	L --> LR[Linear Regression]
-	L --> RF[Random Forest]
-	L --> GS[GridSearchCV]
-	LR --> M[Evaluate]
-	RF --> M
-	GS --> M
-	M --> N
+        DimRed --> Training1 & Training2
+        
+        %% The Federated Cycle
+        Server -->|Global Weights| Training1 & Training2
+        Training1 & Training2 -->|Local Updates| Server
+        Tuning1 -.-> Training1
+        Tuning2 -.-> Training2
+    end
 
-	N --> O{Phenotype type}
-	O -- Discrete --> P[Classification metrics: Accuracy, F1]
-	O -- Continuous --> Q[Regression metrics: R^2, MAE]
-	P --> R[Predict combinatorial mutations]
-	Q --> R
-	R --> T[Deliver: Save artifacts, document usage, CLI/API]
+    %% --- Phase 4: Model Architectures ---
+    subgraph Model_Zoo [4. Models]
+        direction LR
+        Base["<b>Baseline</b><br>Linear Regression"]
+        Ensemble["<b>Ensemble</b><br>Random Forest"]
+    end
+    
+    Training1 -.-> Base & Ensemble
+    Training2 -.-> Base & Ensemble
 
-	B -. targets .-> U[Phenotypes: Height, Hair Color]
-	U -. informs .-> H
-```
+    %% --- Phase 5: Usage / Output ---
+    subgraph Usage [5. Phenotype Prediction]
+        direction TB
+        FinalModel(Final Global Model)
+        Server --> FinalModel
+        
+        InputTest(Test Input: Combinatorial Mutations) --> FinalModel
+        
+        FinalModel --> Discrete["<b>Discrete Output</b><br>(Pathogenicity / Functionality)<br><i>'Hair Color' equivalent</i>"]
+        FinalModel --> Continuous["<b>Continuous Output</b><br>(Stability Score / Fluorescence)<br><i>'Height' equivalent</i>"]
+    end
 
-For a standalone version, see `docs/delivery_flowchart.mmd`.
-
-
+    style FL_System fill:#f9fbe7,stroke:#827717,stroke-width:2px
+    style Usage fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
