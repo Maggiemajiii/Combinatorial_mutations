@@ -6,7 +6,7 @@ Protein modeling for combinatorial mutations
 Predicting the phenotype of combinatorial mutations based on single mutation data.
 Features: Height, Hair Color
 
-## Dataset
+## Dataset 
 * Source: SNP data
 * 1000 Genomes
 
