@@ -14,7 +14,7 @@ graph TD
         
         Filter -->|Subset A: Single Mutations| ClientData1[Client 1 Data]
         Filter -->|Subset B: Different Single Mutations| ClientData2[Client 2 Data]
-        Filter -->|Subset C: Combinatorial Mutations| TestData[<b>Test Data</b><br>(Hold-out for Validation)]
+        Filter -->|Subset C: Combinatorial Mutations| TestData["<b>Test Data</b><br>(Hold-out for Validation)"]
     end
 
     %% --- Phase 2: Preprocessing ---
@@ -22,7 +22,7 @@ graph TD
         direction TB
         Seq["Protein Sequences"]
         
-        Embed[<b>Foundation Model Embedding</b><br>(ESM / BioNeMo)<br>]
+        Embed["<b>Foundation Model Embedding</b><br>(ESM / BioNeMo)<br>"]
         DimRed["<b>Dimensionality Reduction</b><br>(PCA / t-SNE)<br>"]
         
         ClientData1 --> Seq --> Embed --> DimRed
